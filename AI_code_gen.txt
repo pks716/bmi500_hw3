@@ -1,0 +1,24 @@
+LLM used - Claude Sonnet 5
+
+Prompt 1
+
+'''Write a Python script that implements matrix-vector multiplication two ways and compares them:*
+
+1. *`dot_product(vector1, vector2)` — compute the dot product of two vectors using an explicit `for` loop (no numpy). Include a docstring and inline comments.*
+2. *`matrix_vector_product(matrix, vector)` — compute a matrix-vector product by calling `dot_product` on each row of the matrix. Include a docstring and comments.*
+3. *`dot_product_np(vector1, vector2)` and `matrix_vector_product_np(matrix, vector)` — the same two operations implemented with numpy (`np.dot`, `@`) instead of loops.*
+4. *A `main()` function that:*
+   - *Generates one random 1000×1000 matrix and one random 1000-element vector (as numpy arrays, plus a list-of-lists copy for the loop version, so both versions run on identical data).*
+   - *Times each version with `time.perf_counter()`.*
+   - *Checks that both versions agree (max absolute difference between results).*
+   - *Prints a side-by-side table of runtime and speedup, plus the first 5 output entries from each version.*
+'''
+
+Prompt 2
+
+'''Generate suitable tests for matrix-vector-product function in matvec_multiply.py
+   Generate tests for dot-product function in matvec_multiply.py'''
+
+Prompt 3
+
+'''Check for possible failure modes and put logical guards around them'''

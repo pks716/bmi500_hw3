@@ -24,14 +24,39 @@ def dot_product(vector1, vector2):
     -------
     float
         The scalar dot product of vector1 and vector2.
+
+    Raises
+    ------
+    TypeError
+        If either input is not a list/tuple, or contains a non-numeric element.
+    ValueError
+        If either vector is empty, or the two vectors have different lengths.
     """
+    # Guard: inputs must be list-like, not e.g. a scalar or None
+    if not isinstance(vector1, (list, tuple)) or not isinstance(vector2, (list, tuple)):
+        raise TypeError("Both inputs to dot_product must be lists or tuples")
+
+    # Guard: reject empty vectors rather than silently returning 0.0
+    if len(vector1) == 0 or len(vector2) == 0:
+        raise ValueError("Vectors must not be empty")
+
+    # Guard: lengths must match, with the actual sizes in the error message
     if len(vector1) != len(vector2):
-        raise ValueError("Vectors must be of the same length")
+        raise ValueError(
+            f"Vectors must be of the same length (got {len(vector1)} and {len(vector2)})"
+        )
 
     result = 0.0
     # Accumulate the sum of element-wise products
     for i in range(len(vector1)):
-        result += vector1[i] * vector2[i]
+        a, b = vector1[i], vector2[i]
+        # Guard: catch non-numeric elements explicitly, since e.g. "a" * 3
+        # would silently repeat a string instead of raising an error
+        if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
+            raise TypeError(
+                f"Vector elements must be numeric (index {i}: {type(a).__name__}, {type(b).__name__})"
+            )
+        result += a * b
 
     return result
 
@@ -51,9 +76,39 @@ def matrix_vector_product(matrix, vector):
     -------
     list of float
         The resulting m-dimensional vector.
+
+    Raises
+    ------
+    TypeError
+        If matrix/vector are not list-like, or a row of the matrix isn't
+        list-like.
+    ValueError
+        If the matrix is empty, its rows have inconsistent lengths (ragged),
+        or the column count doesn't match the vector length.
     """
-    if len(matrix[0]) != len(vector):
-        raise ValueError("Matrix column count must match vector length")
+    # Guard: inputs must be list-like, not e.g. a scalar or None
+    if not isinstance(matrix, (list, tuple)) or not isinstance(vector, (list, tuple)):
+        raise TypeError("matrix must be a list of rows and vector must be a list")
+
+    # Guard: an empty matrix has no rows to index into
+    if len(matrix) == 0:
+        raise ValueError("Matrix must not be empty")
+
+    # Guard: every row must itself be list-like (catches a flat 1-D matrix)
+    if not all(isinstance(row, (list, tuple)) for row in matrix):
+        raise TypeError("Each row of the matrix must be a list or tuple")
+
+    # Guard: all rows must be the same length (reject a ragged matrix
+    # upfront, rather than failing partway through the loop below)
+    row_length = len(matrix[0])
+    if any(len(row) != row_length for row in matrix):
+        raise ValueError("All rows of the matrix must have the same length")
+
+    # Guard: column count must match vector length, with actual sizes shown
+    if row_length != len(vector):
+        raise ValueError(
+            f"Matrix column count ({row_length}) must match vector length ({len(vector)})"
+        )
 
     result = []
     # Each output entry is the dot product of one matrix row with the vector
