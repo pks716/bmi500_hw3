@@ -1,0 +1,22 @@
+# Review: matvec_multiply_with_guards.py
+
+**Bug**
+- `import random` — unused; `main()` uses `np.random.rand` instead.
+
+**Inconsistency**
+- `dot_product`/`matrix_vector_product` validate everything; `dot_product_np`/`matrix_vector_product_np` validate nothing. Either intentional (comment it) or a gap.
+
+**Correctness**
+- `isinstance(x, (int, float))` accepts `bool` (subclass of `int`) — `[True, False]` passes silently as `[1, 0]`.
+- `numpy.int64` is not an `int` instance on most platforms — a numpy-int row fed into the pure-Python path will incorrectly raise `TypeError`.
+
+**Performance**
+- `matrix_vector_product` validates row lengths for the whole matrix, then `dot_product` re-validates length + every element's type on each call — O(n·m) redundant `isinstance` checks layered on top of the O(n·m) arithmetic. Fine for a public boundary; wasteful if called in a hot loop.
+- Matrix data exists twice in `main()` (`matrix_np` and its `.tolist()` copy) — 2x peak memory for the comparison.
+
+**Minor**
+- No type hints (docstrings cover types, but hints would let tooling catch the above statically).
+- `n = 1000` hardcoded in `main()`, not a constant/arg.
+- No module-level docstring.
+
+**Verdict:** Correct, well-documented, good error messages. Main real risk is the numpy/loop validation asymmetry — looks like an oversight, not a decision, unless commented otherwise.

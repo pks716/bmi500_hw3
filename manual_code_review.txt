@@ -1,0 +1,12 @@
+1) import random at the top isn't used anywhere. main() uses np.random.rand instead
+2) The numpy functions don't have any of the guards the loop versions have.
+3) 
+
+Minor
+1) No type hints anywhere in the file. The docstrings cover the types.
+2) n = 1000 is hardcoded inside main()
+3) No comment at the very top of the file explaining what it's for overall
+
+Overall
+Solid and readable. Comments are better than what I'd usually write.
+
